@@ -44,7 +44,7 @@ var alphaMap = map[int64]string{
 	31: "9",
 }
 
-// Gen 根据num生成兑换码，10位
+// Gen 根据num生成兑换码，10位长度
 func Gen(num int) (string, string) {
 	// 自增id，占32位，1byte=4bit
 	incrBytes := make([]byte, 4)

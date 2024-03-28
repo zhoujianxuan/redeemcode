@@ -35,7 +35,7 @@ func TestLargeGen(t *testing.T) {
 	codeMap := map[string]int64{}
 	for i := 0; i < 10000*100; i++ {
 		num := incr.Add(1)
-		code, _ := Gen(int(num))
+		code := Gen(int(num))
 		if _, ok := codeMap[code]; ok {
 			//repeat
 			log.Println("repeat:", code)

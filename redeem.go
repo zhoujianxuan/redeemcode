@@ -45,31 +45,31 @@ var alphaMap = map[int64]string{
 }
 
 // Gen 根据num生成兑换码，10位长度
-func Gen(num int) (string, string) {
+func Gen(num int) string {
 	// 自增id，占32位，1byte=4bit
 	incrBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(incrBytes, uint32(num))
 
-	sign := Sign(num)
-	fresh := BytesToBinaryString([]byte{byte(rand.Intn(16))})[4:]
+	sign := calculateSignature(num)
+	fresh := bytesToBinaryString([]byte{byte(rand.Intn(16))})[4:]
 
-	codeList := sign + BytesToBinaryString(incrBytes) + fresh
-	return ToCode(codeList), codeList
+	codeBinary := sign + bytesToBinaryString(incrBytes) + fresh
+	return toCode(codeBinary)
 }
 
-// ToCode 通过5位bit转0~31
-func ToCode(codeList string) string {
+// toCode 通过5位bit转0~31
+func toCode(codeBinary string) string {
 	code := ""
 	// 5个二进制位就是0~31
-	for i := 0; i < len(codeList)/5; i++ {
-		bs := codeList[i*5 : (i+1)*5]
+	for i := 0; i < len(codeBinary)/5; i++ {
+		bs := codeBinary[i*5 : (i+1)*5]
 		c, _ := strconv.ParseInt(bs, 2, 64)
 		code += alphaMap[c]
 	}
 	return code
 }
 
-func BytesToBinaryString(bs []byte) string {
+func bytesToBinaryString(bs []byte) string {
 	buf := bytes.NewBuffer([]byte{})
 	for _, v := range bs {
 		buf.WriteString(fmt.Sprintf("%08b", v))
@@ -77,10 +77,10 @@ func BytesToBinaryString(bs []byte) string {
 	return buf.String()
 }
 
-func Sign(num int) string {
+func calculateSignature(num int) string {
 	bl := make([]byte, 4)
 	binary.BigEndian.PutUint32(bl, uint32(num))
-	str := BytesToBinaryString(bl)
+	str := bytesToBinaryString(bl)
 	length := len(str) / 8
 	var sum int
 	var strList []string
@@ -95,5 +95,5 @@ func Sign(num int) string {
 	// 采集数据进行sign
 	signBytes := make([]byte, 2)
 	binary.LittleEndian.PutUint16(signBytes, uint16(sum))
-	return BytesToBinaryString(signBytes)[2:]
+	return bytesToBinaryString(signBytes)[2:]
 }

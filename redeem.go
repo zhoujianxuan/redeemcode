@@ -80,14 +80,13 @@ func bytesToBinaryString(bs []byte) string {
 func calculateSignature(num int) string {
 	bl := make([]byte, 4)
 	binary.BigEndian.PutUint32(bl, uint32(num))
+
 	str := bytesToBinaryString(bl)
 	length := len(str) / 8
+
 	var sum int
-	var strList []string
 	for i := 0; i < 8; i++ {
 		c, _ := strconv.ParseInt(str[i*length:(i+1)*length], 2, 64)
-		strList = append(strList, str[i*length:(i+1)*length])
-
 		weight := rand.Intn(6555 / 8)
 		sum += int(c) + weight
 	}

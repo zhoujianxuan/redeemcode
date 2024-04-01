@@ -11,7 +11,10 @@ import (
 var incr = atomic.Int64{}
 
 func TestGen(t *testing.T) {
-	fmt.Println(Gen(688917))
+	incr.Store(895151)
+	for i := 0; i < 100; i++ {
+		fmt.Println(Gen(int(incr.Add(99))))
+	}
 }
 
 func TestSyncGen(t *testing.T) {
